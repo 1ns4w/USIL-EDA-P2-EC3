@@ -1,35 +1,29 @@
-#ifndef __MYOF_H__//Agregado el ifndef MaizoDiego
-#define __MYOF_H__//Agregado el define MaizoDiego
+#ifndef __MYOF_H__
+#define __MYOF_H__
 
-using namespace std; // Se agrego el using name MaizoDiego
+//jose terrones
+using namespace std; 
 
-//cerrar template Diego Panta
 template <typename T>
 class MyOF
 {
-  int m_variable_interna;
+private:
+//crear variables
+  T m_variable_internal;
+  T *vx;
+
 public:
-    void operator()(T &v)
-    { v += 5;  }
+  void operator()(T &v)
+  { v++;  }
 
-    template <typename Extra>
-    void operator()(T &v, Extra &os)
-    { os << v++ << endl;  }
+  template <typename Extra>
+  void operator()(T &v, Extra &os)
+  { os << v++ << endl;  }
 
-    MyOF(MyOF && other) noexcept:
-      m_variable_interna( std::exchange(other.m_variable_interna, 0))
-    {
-      
-    }
-
-  /*
-  MyClass(MyClass&& other) noexcept:
-   mpiSize(std::exchange(other.mpiSize, nullptr)),
-   miSize2(std::exchange(other.miSize2, 0))
-{}
-
-
-  */
+//crear copia 
+  MyOF(MyOF && other) noexcept
+    : vx(std::exchange(other.vx, nullptr)),
+    m_variable_internal(std::exchange(other.m_variable_internal, 0))
+    {}
 };
-
-#endif //Agregado el endif MaizoDiego 
+#endif
