@@ -18,7 +18,7 @@ void recorrer1(Iterator begin, Iterator end, ostream &os)
 }
 
 template <typename Iterator, typename OF>
-void recorrer2(Iterator begin, Iterator end, OF of)
+void recorrer2(Iterator begin, Iterator end, OF &&of)
 {
 	while (begin != end)
 	{ of(*begin);
@@ -27,14 +27,14 @@ void recorrer2(Iterator begin, Iterator end, OF of)
 }
 
 template <typename Iterator, typename OF, typename Extra>
-void recorrer3(Iterator begin, Iterator end, OF of, Extra &extra_param)
+void recorrer3(Iterator begin, Iterator end, OF &&of, Extra &extra_param)
 {
 	for ( ; begin != end ; begin++)
 		of(*begin, extra_param);
 }
 
 template <typename Container, typename Function>
-void recorrer4(Container &container, Function function)
+void recorrer4(Container &container, const Function &function)
 { 
   auto begin = container.begin();
   auto end = container.end();
@@ -92,11 +92,11 @@ int main()
 	recorrer1(vx.begin() + 2, vx.end() - 1, cout);
   cout << "Check #2\n";
   
-	MyOF<T1> myof;
+	MyOF<T1> myof();
 	recorrer2(vx.begin(), vx.end(), incrementar<T1>);
   print(vx, cout);//agregado print_MaizoDiego
   cout << "Check #3\n";
-	recorrer2(vx.begin(), vx.end(), myof); // Optimizar para no sacar una copia sin afectar las otras llamadas
+	recorrer2(vx.begin(), vx.end(), move(MyOF<T1>())); // Optimizar para no sacar una copia sin afectar las otras llamadas
   print(vx, cout);//agregado print_MaizoDiego
   cout << "Check #4\n";
 
@@ -111,7 +111,7 @@ int main()
   print(vx, cout);//agregado print_MaizoDiego
   cout << "Check #7\n";
 
-  recorrer3(vx.begin(), vx.end(), MyOF<T1>(), cout);
+  recorrer3(vx.begin(), vx.end(), move(MyOF<T1>()), cout);
   cout << "Check #10\n";
   print(vx, cout);//agregado print_MaizoDiego
   cout << "Check #50\n";
