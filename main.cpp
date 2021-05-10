@@ -18,7 +18,7 @@ void recorrer1(Iterator begin, Iterator end, ostream &os)
 }
 
 template <typename Iterator, typename OF>
-void recorrer2(Iterator begin, Iterator end, OF of)
+void recorrer2(Iterator begin, Iterator end, OF &&of) //Se agrego el doble & para que optimice los valores por referencia y no por copia
 {
 	while (begin != end)
 	{ of(*begin);
@@ -27,14 +27,16 @@ void recorrer2(Iterator begin, Iterator end, OF of)
 }
 
 template <typename Iterator, typename OF, typename Extra>
-void recorrer3(Iterator begin, Iterator end, OF of, Extra &extra_param)
+void recorrer3(Iterator begin, Iterator end, OF &&of, Extra &extra_param) //Se agrego el doble & para que optimice los valores por referencia y no por copia
+{
 {
 	for ( ; begin != end ; begin++)
 		of(*begin, extra_param);
 }
 
 template <typename Container, typename Function>
-void recorrer4(Container &container, Function function)
+void recorrer4(Container &container, Function &&function) //Se agrego el doble & para que optimice los valores por referencia y no por copia
+{
 { 
   auto begin = container.begin();
   auto end = container.end();
@@ -54,17 +56,13 @@ void print(Container &container, ostream &os)
 
 template <typename T>
 void incrementar(T &val) //int cambiado por T1 - Kevin De Lama
-{
-	val++;
-}
+{ val++; }
 
 
 int main()
 {
 	// cambio de int por T1 - Diego Panta
-
 	vector<T1> vx;
-
   	// cambio de int por T1 - Diego Panta
 	for (T1 i = 0; i < 10; i++)
 		vx.push_back(i * i);
@@ -96,7 +94,8 @@ int main()
 	recorrer2(vx.begin(), vx.end(), incrementar<T1>);
   print(vx, cout);//agregado print_MaizoDiego
   cout << "Check #3\n";
-	recorrer2(vx.begin(), vx.end(), myof); // Optimizar para no sacar una copia sin afectar las otras llamadas
+	recorrer2(vx.begin(), vx.end(), MyOF<T1>()); 
+  // Optimizar para no sacar una copia sin afectar las otras llamadas
   print(vx, cout);//agregado print_MaizoDiego
   cout << "Check #4\n";
 
@@ -111,7 +110,7 @@ int main()
   print(vx, cout);//agregado print_MaizoDiego
   cout << "Check #7\n";
 
-  recorrer3(vx.begin(), vx.end(), MyOF<T1>(), cout);
+  recorrer3(vx.begin(), vx.end(), move(MyOF<T1>()), cout); //Se convierte en rvalue
   cout << "Check #10\n";
   print(vx, cout);//agregado print_MaizoDiego
   cout << "Check #50\n";
@@ -125,6 +124,5 @@ int main()
   print(vx,cout); //agregado por kevin de lama
   cout << "Check #70\n";
 	// Añadir return 0 - buena practica Diego Panta
-
 	return 0;
 }
